@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'backup_retention'
+require 'thor'
+
+# Describe CLI commands
+class CLI < Thor
+
+  desc "test ", "This is just a test"
+  def test(name)
+    puts "Hello #{name}"
+  end
+
+end
+
+# Run the CLI
+CLI.start(ARGV)
