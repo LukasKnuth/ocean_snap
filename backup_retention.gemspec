@@ -21,4 +21,5 @@ Gem::Specification.new do |spec|
 
   # Dependencies
   spec.add_dependency 'thor', '~> 1.0.1'
+  spec.add_dependency 'droplet_kit', '~> 3.7.0'
 end
