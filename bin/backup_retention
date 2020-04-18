@@ -5,10 +5,49 @@ require 'thor'
 
 # Describe CLI commands
 class CLI < Thor
+  class_option :token, :desc => "DigitalOcean Personal Access Token. If not specified, read from DO_TOKEN environment variable"
 
-  desc "test ", "This is just a test"
-  def test(name)
-    puts "Hello #{name}"
+  desc "volumes ", "Lists all Volumes considered for auto retention"
+  def volumes
+    begin
+      token = self.pick_token(options)
+      BackupRetention.print_info_volumes(token)
+    rescue RuntimeError => e
+      puts e.message
+    end
+  end
+
+  desc "snapshots ", "List all Snapshots considered for auto retention"
+  def snapshots
+    begin
+      token = self.pick_token(options)
+      BackupRetention.print_info_snapshots(token)
+    rescue RuntimeError => e
+      puts e.message
+    end
+  end
+
+  desc "backup ", "Create new Snapshots for ALL Volumes considered for auto retention"
+  def backup
+    begin
+      token = self.pick_token(options)
+      BackupRetention.create_backup(token)
+    rescue RuntimeError => e
+      puts e.message
+    end
+  end
+
+  private
+
+  # Picks the DigitalOcean Access token from either terminal options or environment variable
+  def pick_token(options)
+    if options.key?(:token)
+      options[:token]
+    elsif ENV.key?("DO_TOKEN")
+      ENV["DO_TOKEN"]
+    else
+      raise "REQUIRED: DigitalOcean Personal Access Token is required."
+    end
   end
 
 end
