@@ -22,9 +22,10 @@ class Retention
     slots = {daily: @daily, weekly: @weekly, monthly: @monthly}
 
     backups.map do |backup|
-      type = Retention.backup_type(backup[:created_at])
+      date = backup[:created_at].is_a?(Date) ? backup[:created_at] : Date.parse(backup[:created_at]) 
+      type = Retention.backup_type(date)
       slots[type] = slots[type] - 1
-      {created_at: backup[:created_at], type: type, retain?: slots[type] >= 0}
+      {created_at: backup[:created_at], type: type, retain?: slots[type] >= 0, original: backup}
     end
   end
 
