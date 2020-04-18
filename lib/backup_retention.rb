@@ -40,4 +40,24 @@ module BackupRetention
     end
   end
 
+  def BackupRetention.retain_backups(ocean_token, daily, weekly, monthly)
+    retention = Retention.new(daily, weekly, monthly)
+    ocean = DigitalOcean.new(ocean_token)
+    ocean.find_volumes.each do |vol|
+      puts "Retaining Snapshots for Volume #{vol.name} (ID: #{vol.id})..."
+      
+      snapshots = ocean.list_backups(vol.id)
+      retention.retain(snapshots).each do |operation|
+        snap = operation[:original]
+        if operation[:retain?]
+          puts "  - Retaining #{snap.name} (ID: #{snap.id}) as #{operation[:type]}"
+        else 
+          puts "  - Deleting #{snap.name} (ID: #{snap.id})"
+          ocean.delete_backup(snap.id)
+        end
+      end
+      puts "Done."
+    end
+  end
+
 end

@@ -37,6 +37,19 @@ class CLI < Thor
     end
   end
 
+  desc "retain ", "Retain all Snapshots in the rotation for ALL Volumes considered for auto retention"
+  option :daily, :type => :numeric, :default => 5, :desc => "Number of daily Snapshots to retain"
+  option :weekly, :type => :numeric, :default => 4, :desc => "Number of weekly Snapshots to retain"
+  option :monthly, :type => :numeric, :default => 2, :desc => "Number of monthly Snapshots to retain"
+  def retain
+    begin
+      token = self.pick_token(options)
+      BackupRetention.retain_backups(token, options[:daily], options[:weekly], options[:monthly])
+    rescue RuntimeError => e
+      puts e.message
+    end
+  end
+
   private
 
   # Picks the DigitalOcean Access token from either terminal options or environment variable
