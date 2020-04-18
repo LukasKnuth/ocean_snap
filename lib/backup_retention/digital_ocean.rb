@@ -15,8 +15,8 @@ class DigitalOcean
         end
     end
 
-    def list_backups() # Parse the type here already and add it "somehow"?
-        @client.snapshots.all(resource_type: 'volume').filter do |s|
+    def list_backups(volume_id)
+        @client.volumes.snapshots(id: volume_id).filter do |s|
             s.name.start_with?(AUTO_BACKUP_IDENTIFIER)
         end
     end
