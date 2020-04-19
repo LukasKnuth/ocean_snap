@@ -70,4 +70,29 @@ class BackupRetentionTest < Minitest::Test
     end
   end
 
+  def test_ordering_enforced
+    retention = Retention.new(5, 4, 2)
+
+    backups = (13..19).map {|day| {created_at: Date.new(2020, 7, day)} }.shuffle
+    result = retention.retain(backups)
+
+    expected = [
+        {created_at: Date.new(2020, 7, 19), type: :daily},
+        {created_at: Date.new(2020, 7, 18), type: :daily},
+        {created_at: Date.new(2020, 7, 17), type: :weekly},
+        {created_at: Date.new(2020, 7, 16), type: :daily},
+        {created_at: Date.new(2020, 7, 15), type: :daily},
+        {created_at: Date.new(2020, 7, 14), type: :daily},
+    ]
+    result.each do |res|
+      test = expected.detect { |e| e[:created_at] == res[:created_at] }
+      if res[:retain?]
+        assert test != nil
+        assert_equal test[:type], res[:type], "The expected retention type should match"
+      else
+        assert_nil test, "There should be no expectation if the backup isn't retained"
+      end
+    end
+  end
+
 end
