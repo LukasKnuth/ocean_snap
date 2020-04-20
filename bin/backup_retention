@@ -38,6 +38,16 @@ class CLI < Thor
     BackupRetention.retain_backups(token, options[:daily], options[:weekly], options[:monthly])
   end
 
+  desc 'autorun ', 'Automatically run BACKUP and RETAIN in order. Use this for cronjobs!'
+  long_desc <<-LONGDESC
+    This is a Meta command. It invokes the BACKUP command first and the RETAIN command after.
+    As such, it supports ALL options that are available for BOTH commands!
+  LONGDESC
+  def autorun
+    invoke :backup
+    invoke :retain
+  end
+
   private
 
   # Picks the DigitalOcean Access token from either terminal options or environment variable
