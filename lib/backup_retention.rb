@@ -32,11 +32,16 @@ module BackupRetention
 
   # Creates new Snapshots for all targeted volumes
   def self.create_backup(ocean_token)
+    date = Date.today
     ocean = DigitalOcean.new(ocean_token)
     ocean.find_volumes.each do |vol|
-      puts "Creating Snapshot for Volume #{vol.name} (ID: #{vol.id})..."
-      snap = ocean.create_backup(vol.id, 'daily') # TODO do we even set type here? Not necessary, since we look at created_at only
-      puts "Done. Created #{snap.name} (ID: #{snap.id})"
+      if ocean.backup_exists?(vol.id, date)
+        puts "Skipping Volume #{vol.name} (ID: #{vol.id}), already exists."
+      else
+        puts "Creating Snapshot for Volume #{vol.name} (ID: #{vol.id})..."
+        snap = ocean.create_backup(vol.id, date)
+        puts "  - Done. Created #{snap.name} (ID: #{snap.id})"
+      end
     end
   end
 

@@ -23,10 +23,17 @@ class DigitalOcean
     end
   end
 
-  def create_backup(volume_id, type)
-    today = Date.today
-    name = "#{AUTO_BACKUP_IDENTIFIER}_#{today.day}.#{today.month}.#{today.year}_#{type}"
+  def create_backup(volume_id, date)
+    date = date.is_a?(Date) ? date : Date.parse(date)
+    name = "#{AUTO_BACKUP_IDENTIFIER}_#{date.day}.#{date.month}.#{date.year}"
     @client.volumes.create_snapshot(id: volume_id, name: name)
+  end
+
+  def backup_exists?(volume_id, date)
+    target = date.is_a?(Date) ? date : Date.parse(date)
+    list_backups(volume_id).any? do |snap|
+        Date.parse(snap.created_at) == target
+    end
   end
 
   def delete_backup(snapshot_id)
