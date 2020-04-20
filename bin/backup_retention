@@ -7,34 +7,26 @@ require 'thor'
 class CLI < Thor
   class_option :token, :desc => "DigitalOcean Personal Access Token. If not specified, read from DO_TOKEN environment variable"
 
+  def self.exit_on_failure?
+    true
+  end
+
   desc "volumes ", "Lists all Volumes considered for auto retention"
   def volumes
-    begin
-      token = pick_token(options)
-      BackupRetention.print_info_volumes(token)
-    rescue RuntimeError => e
-      puts e.message
-    end
+    token = pick_token(options)
+    BackupRetention.print_info_volumes(token)
   end
 
   desc 'snapshots ', 'List all Snapshots considered for auto retention'
   def snapshots
-    begin
-      token = pick_token(options)
-      BackupRetention.print_info_snapshots(token)
-    rescue RuntimeError => e
-      puts e.message
-    end
+    token = pick_token(options)
+    BackupRetention.print_info_snapshots(token)
   end
 
   desc 'backup ', 'Create new Snapshots for ALL Volumes considered for auto retention'
   def backup
-    begin
-      token = pick_token(options)
-      BackupRetention.create_backup(token)
-    rescue RuntimeError => e
-      puts e.message
-    end
+    token = pick_token(options)
+    BackupRetention.create_backup(token)
   end
 
   desc 'retain ', 'Retain all Snapshots in the rotation for ALL Volumes considered for auto retention'
@@ -42,12 +34,8 @@ class CLI < Thor
   option :weekly, type: :numeric, default: 4, desc: 'Number of weekly Snapshots to retain'
   option :monthly, type: :numeric, default: 2, desc: 'Number of monthly Snapshots to retain'
   def retain
-    begin
-      token = pick_token(options)
-      BackupRetention.retain_backups(token, options[:daily], options[:weekly], options[:monthly])
-    rescue RuntimeError => e
-      puts e.message
-    end
+    token = pick_token(options)
+    BackupRetention.retain_backups(token, options[:daily], options[:weekly], options[:monthly])
   end
 
   private
@@ -59,7 +47,7 @@ class CLI < Thor
     elsif ENV.key?('DO_TOKEN')
       ENV['DO_TOKEN']
     else
-      raise 'REQUIRED: DigitalOcean Personal Access Token is required.'
+      raise Thor::Error, 'REQUIRED: DigitalOcean Personal Access Token is required.'
     end
   end
 
