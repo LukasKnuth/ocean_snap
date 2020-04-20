@@ -2,10 +2,10 @@ require 'date'
 
 class Retention
 
-  def initialize(dailyCount, weeklyCount, monthlyCount)
-    @daily = dailyCount
-    @weekly = weeklyCount
-    @monthly = monthlyCount
+  def initialize(daily_count, weekly_count, monthly_count)
+    @daily = daily_count
+    @weekly = weekly_count
+    @monthly = monthly_count
   end
 
   def self.backup_type(date)
@@ -22,9 +22,9 @@ class Retention
     slots = {daily: @daily, weekly: @weekly, monthly: @monthly}
 
     backups.sort do |a, b|
-      dateA = a[:created_at].is_a?(Date) ? a[:created_at] : Date.parse(a[:created_at])
-      dateB = b[:created_at].is_a?(Date) ? b[:created_at] : Date.parse(b[:created_at])
-      dateB <=> dateA
+      date_a = a[:created_at].is_a?(Date) ? a[:created_at] : Date.parse(a[:created_at])
+      date_b = b[:created_at].is_a?(Date) ? b[:created_at] : Date.parse(b[:created_at])
+      date_b <=> date_a # Order is important here! Sort descending.
     end.map do |backup|
       date = backup[:created_at].is_a?(Date) ? backup[:created_at] : Date.parse(backup[:created_at]) 
       type = Retention.backup_type(date)

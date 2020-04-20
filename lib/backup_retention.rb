@@ -7,7 +7,7 @@ require 'backup_retention/digital_ocean'
 module BackupRetention
   
   # Fetches DigitalOcean information about targated volumes
-  def BackupRetention.print_info_volumes(ocean_token)
+  def self.print_info_volumes(ocean_token)
     puts "The following Volumes are considered for the automatic retention"
     puts "Condition: They must be attached to a Droplet"
 
@@ -17,7 +17,7 @@ module BackupRetention
   end
 
   # Fetches DigitalOcean information about targated snapshots
-  def BackupRetention.print_info_snapshots(ocean_token)
+  def self.print_info_snapshots(ocean_token)
     puts "The following Snapshots are considered for the automatic retention"
     puts "Condition: They belong to a Volume attached to a Droplet"
 
@@ -31,7 +31,7 @@ module BackupRetention
   end
 
   # Creates new Snapshots for all targated volumes
-  def BackupRetention.create_backup(ocean_token)
+  def self.create_backup(ocean_token)
     ocean = DigitalOcean.new(ocean_token)
     ocean.find_volumes.each do |vol|
       puts "Creating Snapshot for Volume #{vol.name} (ID: #{vol.id})..."
@@ -40,7 +40,7 @@ module BackupRetention
     end
   end
 
-  def BackupRetention.retain_backups(ocean_token, daily, weekly, monthly)
+  def self.retain_backups(ocean_token, daily, weekly, monthly)
     retention = Retention.new(daily, weekly, monthly)
     ocean = DigitalOcean.new(ocean_token)
     ocean.find_volumes.each do |vol|
