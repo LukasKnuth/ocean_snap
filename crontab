@@ -1,0 +1,4 @@
+# Run 3 times a day (every 8 hours). 
+# IMPORTANT: This file MUST have LF (Unix line endings)! Otherwise the command wont execute correctly.
+
+0 4,12,20 * * * backup_retention autorun
