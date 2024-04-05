@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> While I did use this with my single Droplet, I not run it in years.
+> I'm keeping the repository as an exhibit, you should probably not actually use this.
+
 # Backup_Retention
 
 A simple Ruby application that creates Volume snapshots for DigitalOcean Volumes mounted into Droplets.
